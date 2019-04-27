@@ -1,0 +1,17 @@
+$def with(work)
+
+$if work and not is_bot():
+    $ load_more_url = '/browse.json?q=%s&work_id=%s&_type=%s&sorts=%s'
+
+    $ related_by_author = work.related_editions_by_author()
+    $ related_by_subject = work.get_related_editions_by_subject()
+
+    $ authors = ', '.join([author for author in work.get_author_names(blacklist=['anonymous'])]) or 'this author'
+related_by_author.get('authors', [])])
+    <div class="related-books">
+      $:macros.BookCarousel(related_by_subject.get('editions'), \
+      title=title, url=url, key='related-subjects-carousel', min_books=min_books, load_more={"url": load_more_url % (work.key, 'subjects'), "mode": "page", "limit": limit}, test=test)
+
+      $:macros.BookCarousel(key="related-subjects-carousel", title="You might also like", work_id=work.key, min_books=1)
+      $:macros.BookCarousel(key="related-authors-carousel", title="More by %s" % (authors or "this author"), work_id=work.key, _type="authors", min_books=1)
+    </div>
